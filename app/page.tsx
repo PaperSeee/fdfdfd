@@ -8,7 +8,7 @@ import CustomCursor from "@/components/custom-cursor"
 import IntroSequence from "@/components/intro-sequence"
 import ContactForm from "@/components/contact-form"
 
-// Charger les composants 3D côté client uniquement
+// Charger les composants 3D côté client uniquement avec gestion d'erreur
 const Canvas = dynamic(() => import("@react-three/fiber").then(mod => ({ default: mod.Canvas })), {
   ssr: false,
   loading: () => (
@@ -31,6 +31,61 @@ const InteractiveObject = dynamic(() => import("@/components/interactive-object"
 })
 
 export type ContentMode = "vitrine" | "ecommerce" | "saas"
+
+// Composant 3D Scene avec gestion d'erreur
+function ThreeScene({ 
+  currentMode, 
+  onModeChange, 
+  isTransitioning, 
+  introComplete,
+  height 
+}: {
+  currentMode: ContentMode
+  onModeChange: (mode: ContentMode) => void
+  isTransitioning: boolean
+  introComplete: boolean
+  height: string
+}) {
+  const [error, setError] = useState<string | null>(null)
+
+  if (error) {
+    return (
+      <div className={`${height} w-full bg-gray-900 rounded-lg flex items-center justify-center border border-gray-700`}>
+        <div className="text-center p-6">
+          <div className="text-gray-400 text-sm mb-2">Expérience 3D non disponible</div>
+          <div className="text-xs text-gray-500">Utilisez la navigation en bas de page</div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className={`${height} w-full`}>
+      <Canvas 
+        camera={{ position: [0, 0, 4], fov: 85 }} 
+        className="w-full h-full"
+        onError={(error) => {
+          console.warn("Canvas error:", error)
+          setError("Erreur WebGL")
+        }}
+        gl={{ 
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance"
+        }}
+      >
+        <Environment preset="studio" />
+        <InteractiveObject
+          currentMode={currentMode}
+          onModeChange={onModeChange}
+          isTransitioning={isTransitioning}
+          introComplete={introComplete}
+        />
+        <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
+      </Canvas>
+    </div>
+  )
+}
 
 export default function Home() {
   const [currentMode, setCurrentMode] = useState<ContentMode>("vitrine")
@@ -138,7 +193,7 @@ export default function Home() {
       <div className={`transition-opacity duration-1000 ${introComplete ? "opacity-100" : "opacity-0"}`}>
         {!isMobile && <CustomCursor />}
 
-        {/* Header - Reduced padding for laptop */}
+        {/* Header */}
         <header className="relative z-30 p-4 sm:p-6 lg:p-4 xl:p-6">
           <div className="max-w-7xl mx-auto text-center">
             <h1 className="text-xl sm:text-2xl lg:text-2xl xl:text-3xl font-light mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
@@ -152,25 +207,22 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Contenu principal - Layout adaptatif */}
+        {/* Contenu principal */}
         <main className="relative z-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            {/* Mobile Layout - Stacked */}
+            {/* Mobile Layout */}
             {isMobile ? (
               <div className="space-y-6 pb-32">
-                {/* Objet 3D Mobile */}
+                {/* Objet 3D Mobile avec fallback */}
                 <div className="relative">
-                  <div ref={canvasRef} className="h-[280px] w-full">
-                    <Canvas camera={{ position: [0, 0, 4], fov: 85 }} className="w-full h-full">
-                      <Environment preset="studio" />
-                      <InteractiveObject
-                        currentMode={currentMode}
-                        onModeChange={handleModeChange}
-                        isTransitioning={isTransitioning}
-                        introComplete={introComplete}
-                      />
-                      <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
-                    </Canvas>
+                  <div ref={canvasRef}>
+                    <ThreeScene
+                      currentMode={currentMode}
+                      onModeChange={handleModeChange}
+                      isTransitioning={isTransitioning}
+                      introComplete={introComplete}
+                      height="h-[280px]"
+                    />
                   </div>
 
                   {/* Mobile Mode Indicator */}
@@ -204,22 +256,19 @@ export default function Home() {
                 </div>
               </div>
             ) : (
-              /* Desktop Layout - Side by side with optimized heights */
+              /* Desktop Layout */
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-start">
-                {/* Colonne gauche - Objet 3D - Reduced height for laptop */}
+                {/* Colonne gauche - Objet 3D */}
                 <div className="relative order-2 lg:order-1">
                   <div className="relative">
-                    <div ref={canvasRef} className="h-[350px] lg:h-[400px] xl:h-[500px] w-full">
-                      <Canvas camera={{ position: [0, 0, 5], fov: 75 }} className="w-full h-full">
-                        <Environment preset="studio" />
-                        <InteractiveObject
-                          currentMode={currentMode}
-                          onModeChange={handleModeChange}
-                          isTransitioning={isTransitioning}
-                          introComplete={introComplete}
-                        />
-                        <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
-                      </Canvas>
+                    <div ref={canvasRef}>
+                      <ThreeScene
+                        currentMode={currentMode}
+                        onModeChange={handleModeChange}
+                        isTransitioning={isTransitioning}
+                        introComplete={introComplete}
+                        height="h-[350px] lg:h-[400px] xl:h-[500px]"
+                      />
                     </div>
 
                     {/* Instructions superposées */}
@@ -242,7 +291,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Colonne droite - Contenu - Reduced spacing */}
+                {/* Colonne droite - Contenu */}
                 <div ref={contentRef} className="space-y-4 lg:space-y-6 order-1 lg:order-2">
                   <ContentSection mode={currentMode} onContactClick={() => setShowContact(true)} />
                 </div>

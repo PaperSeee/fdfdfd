@@ -24,33 +24,33 @@ export default function InteractiveObject({
   const [hovered, setHovered] = useState(false)
   const { viewport } = useThree()
 
-  // Animation continue de rotation
+  // Animation continue de rotation - avec vérifications de sécurité
   useFrame((state) => {
-    if (meshRef.current && wireframeRef.current && introComplete) {
+    if (!meshRef.current || !wireframeRef.current || !introComplete) return
+
+    try {
       const time = state.clock.elapsedTime
 
-      // Rotation continue
-      meshRef.current.rotation.y += 0.01
-      wireframeRef.current.rotation.y += 0.01
+      // Rotation continue - vérification de sécurité
+      if (meshRef.current.rotation && wireframeRef.current.rotation) {
+        meshRef.current.rotation.y += 0.01
+        wireframeRef.current.rotation.y += 0.01
 
-      // Mouvement subtil - Sécurisé
-      if (meshRef.current.rotation) {
+        // Mouvement subtil
         meshRef.current.rotation.x = Math.sin(time * 0.5) * 0.1
-      }
-      if (wireframeRef.current.rotation) {
         wireframeRef.current.rotation.x = Math.sin(time * 0.5) * 0.1
       }
 
-      // Effet de respiration
-      const scale = 1 + Math.sin(time * 0.8) * 0.05
-      const finalScale = hovered ? scale * 1.2 : scale
+      // Effet de respiration - vérification de sécurité
+      if (meshRef.current.scale && wireframeRef.current.scale) {
+        const scale = 1 + Math.sin(time * 0.8) * 0.05
+        const finalScale = hovered ? scale * 1.2 : scale
 
-      if (meshRef.current.scale) {
         meshRef.current.scale.setScalar(finalScale)
-      }
-      if (wireframeRef.current.scale) {
         wireframeRef.current.scale.setScalar(finalScale * 1.02)
       }
+    } catch (error) {
+      console.warn("Animation frame error:", error)
     }
   })
 
@@ -66,28 +66,32 @@ export default function InteractiveObject({
     const currentIndex = modes.indexOf(currentMode)
     const nextMode = modes[(currentIndex + 1) % modes.length]
 
-    // Animation de l'objet lors du clic - Sécurisée
+    // Animation de l'objet lors du clic - avec vérifications
     if (meshRef.current && wireframeRef.current) {
-      // Animation de rotation
-      if (meshRef.current.rotation && wireframeRef.current.rotation) {
-        gsap.to([meshRef.current.rotation, wireframeRef.current.rotation], {
-          y: "+=6.28", // 2π radians = 360°
-          duration: 1,
-          ease: "power2.inOut",
-        })
-      }
+      try {
+        // Animation de rotation
+        if (meshRef.current.rotation && wireframeRef.current.rotation) {
+          gsap.to([meshRef.current.rotation, wireframeRef.current.rotation], {
+            y: "+=6.28", // 2π radians = 360°
+            duration: 1,
+            ease: "power2.inOut",
+          })
+        }
 
-      // Animation de scale
-      if (meshRef.current.scale && wireframeRef.current.scale) {
-        gsap.to([meshRef.current.scale, wireframeRef.current.scale], {
-          x: 1.5,
-          y: 1.5,
-          z: 1.5,
-          duration: 0.15,
-          ease: "power2.out",
-          yoyo: true,
-          repeat: 1,
-        })
+        // Animation de scale
+        if (meshRef.current.scale && wireframeRef.current.scale) {
+          gsap.to([meshRef.current.scale, wireframeRef.current.scale], {
+            x: 1.5,
+            y: 1.5,
+            z: 1.5,
+            duration: 0.15,
+            ease: "power2.out",
+            yoyo: true,
+            repeat: 1,
+          })
+        }
+      } catch (error) {
+        console.warn("Click animation error:", error)
       }
     }
 
@@ -108,17 +112,24 @@ export default function InteractiveObject({
     }
   }
 
-  // Responsive sizing - Sécurisé
+  // Responsive sizing - plus sécurisé
   const getScale = () => {
-    if (!viewport) return 1.5
-    if (viewport.width < 4) return 1.2 // Mobile
-    if (viewport.width < 8) return 1.5 // Tablet
-    return 1.8 // Desktop
+    try {
+      if (!viewport?.width) return 1.5
+      if (viewport.width < 4) return 1.2 // Mobile
+      if (viewport.width < 8) return 1.5 // Tablet
+      return 1.8 // Desktop
+    } catch (error) {
+      console.warn("Viewport scale error:", error)
+      return 1.5
+    }
   }
 
-  // Animation d'entrée
+  // Animation d'entrée - avec vérifications
   useEffect(() => {
-    if (introComplete && meshRef.current && wireframeRef.current) {
+    if (!introComplete || !meshRef.current || !wireframeRef.current) return
+
+    try {
       const scale = getScale()
       if (meshRef.current.scale && wireframeRef.current.scale) {
         gsap.fromTo(
@@ -134,6 +145,8 @@ export default function InteractiveObject({
           },
         )
       }
+    } catch (error) {
+      console.warn("Entry animation error:", error)
     }
   }, [introComplete])
 
@@ -164,7 +177,13 @@ export default function InteractiveObject({
         scale={getScale()}
       >
         <icosahedronGeometry args={[1, 1]} />
-        <meshStandardMaterial color={getModeColor()} metalness={0.8} roughness={0.2} transparent opacity={0.9} />
+        <meshStandardMaterial
+          color={getModeColor()}
+          metalness={0.8}
+          roughness={0.2}
+          transparent
+          opacity={0.9}
+        />
       </mesh>
 
       {/* Wireframe overlay */}
@@ -176,7 +195,12 @@ export default function InteractiveObject({
         scale={getScale()}
       >
         <icosahedronGeometry args={[1, 1]} />
-        <meshBasicMaterial color={getModeColor()} wireframe transparent opacity={hovered ? 0.6 : 0.3} />
+        <meshBasicMaterial
+          color={getModeColor()}
+          wireframe
+          transparent
+          opacity={hovered ? 0.6 : 0.3}
+        />
       </mesh>
 
       {/* Lumière ambiante */}
