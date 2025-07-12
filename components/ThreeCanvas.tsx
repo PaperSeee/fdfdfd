@@ -4,11 +4,11 @@ import dynamic from "next/dynamic"
 
 // Chargement client-only
 const Canvas = dynamic(
-  () => import("@react-three/fiber").then((mod) => mod.Canvas),
+  () => import("@react-three/fiber").then((mod) => ({ default: mod.Canvas })),
   { ssr: false }
 )
 const OrbitControls = dynamic(
-  () => import("@react-three/drei").then((mod) => mod.OrbitControls),
+  () => import("@react-three/drei").then((mod) => ({ default: mod.OrbitControls })),
   { ssr: false }
 )
 
