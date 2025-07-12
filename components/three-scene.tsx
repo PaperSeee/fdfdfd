@@ -58,11 +58,27 @@ export default function ThreeScene({
     }
   }, [])
 
-  // Gérer les erreurs de rendu
+  // Gérer les erreurs de rendu avec plus de détails
   const handleRenderError = (error: Error, errorInfo: React.ErrorInfo) => {
-    console.error('Three.js render error:', error, errorInfo)
+    console.error('🔴 Three.js render error détaillée:', {
+      error: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+      currentMode,
+      isTransitioning,
+      introComplete
+    })
+    
     setRenderError(error.message)
     setHasWebGL(false)
+  }
+
+  // Vérifications de sécurité pour les props
+  const safeProps = {
+    currentMode: currentMode || "vitrine",
+    onModeChange: onModeChange || (() => {}),
+    isTransitioning: Boolean(isTransitioning),
+    introComplete: Boolean(introComplete)
   }
 
   // Ne pas rendre avant que le client soit prêt
@@ -105,18 +121,22 @@ export default function ThreeScene({
           <Canvas
             camera={{ position: [0, 0, 4], fov: 85 }}
             className="w-full h-full"
-            onCreated={({ gl }) => {
+            onCreated={({ gl, scene, camera }) => {
               try {
+                // Vérifications plus strictes
+                if (!gl || !scene || !camera) {
+                  throw new Error("Canvas creation failed - missing core objects")
+                }
+                
                 // Configurer le renderer avec vérifications
-                if (gl && typeof window !== 'undefined') {
-                  gl.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
-                  // Vérification de la propriété avant usage
-                  if (gl.physicallyCorrectLights !== undefined) {
-                    gl.physicallyCorrectLights = true
-                  }
+                gl.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+                // Vérification de la propriété avant usage
+                if (gl.physicallyCorrectLights !== undefined) {
+                  gl.physicallyCorrectLights = true
                 }
               } catch (error) {
                 console.warn('Error configuring WebGL renderer:', error)
+                setRenderError(error instanceof Error ? error.message : 'Unknown error')
               }
             }}
             gl={{
@@ -129,16 +149,13 @@ export default function ThreeScene({
           >
             <Environment preset="studio" />
             <InteractiveObject
-              currentMode={currentMode}
-              onModeChange={onModeChange}
-              isTransitioning={isTransitioning}
-              introComplete={introComplete}
+              {...safeProps}
             />
             <OrbitControls 
               enableZoom={false} 
               enablePan={false} 
               enableRotate={false} 
-              enabled={introComplete}
+              enabled={safeProps.introComplete}
             />
           </Canvas>
         </Suspense>

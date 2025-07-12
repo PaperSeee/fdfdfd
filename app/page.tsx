@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import dynamic from "next/dynamic"
 import { gsap } from "gsap"
 import ContentSection from "@/components/content-section"
@@ -71,44 +71,32 @@ export default function Home() {
     }
   }, [])
 
-  const handleModeChange = (newMode: ContentMode) => {
-    if (isTransitioning || newMode === currentMode) return
+  // Vérifications de sécurité pour les états
+  const safeCurrentMode = currentMode || "vitrine"
+  const safeIsTransitioning = Boolean(isTransitioning)
+  const safeIntroComplete = Boolean(introComplete)
 
+  // Handler sécurisé
+  const handleModeChange = useCallback((newMode: ContentMode) => {
     try {
-      setIsTransitioning(true)
-
-      if (contentRef.current) {
-        gsap.to(contentRef.current, {
-          opacity: 0,
-          x: isMobile ? 0 : -30,
-          y: isMobile ? -20 : 0,
-          duration: 0.3,
-          ease: "power2.inOut",
-          onComplete: () => {
-            setCurrentMode(newMode)
-            if (contentRef.current) {
-              gsap.fromTo(
-                contentRef.current,
-                { opacity: 0, x: isMobile ? 0 : 30, y: isMobile ? 20 : 0 },
-                {
-                  opacity: 1,
-                  x: 0,
-                  y: 0,
-                  duration: 0.5,
-                  ease: "power2.out",
-                  onComplete: () => setIsTransitioning(false),
-                },
-              )
-            }
-          },
-        })
+      if (!newMode || typeof newMode !== 'string') {
+        console.warn("Invalid mode change:", newMode)
+        return
       }
-    } catch (error) {
-      console.error('Error in mode change:', error)
+      
+      if (safeIsTransitioning) return
+
+      setIsTransitioning(true)
       setCurrentMode(newMode)
+      
+      setTimeout(() => {
+        setIsTransitioning(false)
+      }, 1000)
+    } catch (error) {
+      console.error("Mode change error:", error)
       setIsTransitioning(false)
     }
-  }
+  }, [safeIsTransitioning])
 
   useEffect(() => {
     if (introComplete && contentRef.current && canvasRef.current) {
@@ -365,6 +353,18 @@ export default function Home() {
                   } ${currentMode === "saas" ? "text-white font-medium" : "text-gray-400"}`}
                 >
                   SaaS
+                </button>
+              </div>
+            </div>
+          </nav>
+
+          {/* Formulaire de contact modal */}
+          {showContact && <ContactForm onClose={() => setShowContact(false)} />}
+        </div>
+      </div>
+    </ErrorBoundary>
+  )
+}
                 </button>
               </div>
             </div>
