@@ -24,11 +24,18 @@ export default function InteractiveObject({
   const [hovered, setHovered] = useState(false)
   const { viewport } = useThree()
 
-  // Responsive sizing - plus sécurisé
+  // Protection côté client
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  // Responsive sizing avec protection
   const getScale = () => {
-    console.log("[getScale] viewport:", viewport) // <-- log viewport
+    if (!isClient || !viewport?.width) return 1.5
+
     try {
-      if (!viewport?.width) return 1.5
       if (viewport.width < 4) return 1.2 // Mobile
       if (viewport.width < 8) return 1.5 // Tablet
       return 1.8 // Desktop
@@ -40,23 +47,20 @@ export default function InteractiveObject({
 
   // Animation continue de rotation
   useFrame((state) => {
-    console.log("[useFrame] meshRef:", meshRef.current, "wireframeRef:", wireframeRef.current) // <-- log refs
-    if (!meshRef.current || !wireframeRef.current || !introComplete) return
+    if (!meshRef.current || !wireframeRef.current || !introComplete || !isClient) return
 
     try {
       const time = state.clock.elapsedTime
 
-      // Rotation continue - vérification de sécurité
+      // Rotation continue
       if (meshRef.current.rotation && wireframeRef.current.rotation) {
         meshRef.current.rotation.y += 0.01
         wireframeRef.current.rotation.y += 0.01
-
-        // Mouvement subtil
         meshRef.current.rotation.x = Math.sin(time * 0.5) * 0.1
         wireframeRef.current.rotation.x = Math.sin(time * 0.5) * 0.1
       }
 
-      // Effet de respiration - vérification de sécurité
+      // Effet de respiration
       if (meshRef.current.scale && wireframeRef.current.scale) {
         const scale = 1 + Math.sin(time * 0.8) * 0.05
         const finalScale = hovered ? scale * 1.2 : scale
@@ -71,8 +75,7 @@ export default function InteractiveObject({
 
   // Animation d'entrée
   useEffect(() => {
-    console.log("[entry useEffect] introComplete:", introComplete, "meshRef:", meshRef.current) // <-- log entrée
-    if (!introComplete || !meshRef.current || !wireframeRef.current) return
+    if (!introComplete || !meshRef.current || !wireframeRef.current || !isClient) return
 
     try {
       const scale = getScale()
@@ -93,34 +96,29 @@ export default function InteractiveObject({
     } catch (error) {
       console.warn("Entry animation error:", error)
     }
-  }, [introComplete])
+  }, [introComplete, isClient])
 
   const handleClick = (event: any) => {
-    console.log("[handleClick] currentMode:", currentMode, "isTransitioning:", isTransitioning, "meshRef:", meshRef.current) // <-- log click
     event.stopPropagation()
 
-    if (isTransitioning) return
-
-    console.log("Objet cliqué!") // Debug
+    if (isTransitioning || !isClient) return
 
     // Déterminer le prochain mode
     const modes: ContentMode[] = ["vitrine", "ecommerce", "saas"]
     const currentIndex = modes.indexOf(currentMode)
     const nextMode = modes[(currentIndex + 1) % modes.length]
 
-    // Animation de l'objet lors du clic - avec vérifications
+    // Animation de l'objet lors du clic
     if (meshRef.current && wireframeRef.current) {
       try {
-        // Animation de rotation
         if (meshRef.current.rotation && wireframeRef.current.rotation) {
           gsap.to([meshRef.current.rotation, wireframeRef.current.rotation], {
-            y: "+=6.28", // 2π radians = 360°
+            y: "+=6.28",
             duration: 1,
             ease: "power2.inOut",
           })
         }
 
-        // Animation de scale
         if (meshRef.current.scale && wireframeRef.current.scale) {
           gsap.to([meshRef.current.scale, wireframeRef.current.scale], {
             x: 1.5,
@@ -143,7 +141,7 @@ export default function InteractiveObject({
   const handlePointerOver = (e: any) => {
     e.stopPropagation()
     setHovered(true)
-    if (typeof document !== 'undefined') {
+    if (isClient && typeof document !== 'undefined') {
       document.body.style.cursor = "pointer"
     }
   }
@@ -151,7 +149,7 @@ export default function InteractiveObject({
   const handlePointerOut = (e: any) => {
     e.stopPropagation()
     setHovered(false)
-    if (typeof document !== 'undefined') {
+    if (isClient && typeof document !== 'undefined') {
       document.body.style.cursor = "auto"
     }
   }
@@ -162,13 +160,19 @@ export default function InteractiveObject({
       case "vitrine":
         return "#ffffff"
       case "ecommerce":
-        return "#10b981" // Vert
+        return "#10b981"
       case "saas":
-        return "#3b82f6" // Bleu
+        return "#3b82f6"
       default:
         return "#ffffff"
     }
   }
+
+  if (!isClient) {
+    return null
+  }
+
+  const scale = getScale()
 
   return (
     <group position={[0, 0, 0]}>
@@ -178,7 +182,7 @@ export default function InteractiveObject({
         onClick={handleClick}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
-        scale={[getScale(), getScale(), getScale()]} // <-- scale en tableau
+        scale={[scale, scale, scale]}
       >
         <icosahedronGeometry args={[1, 1]} />
         <meshStandardMaterial
@@ -196,7 +200,7 @@ export default function InteractiveObject({
         onClick={handleClick}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
-        scale={[getScale(), getScale(), getScale()]} // <-- scale en tableau
+        scale={[scale, scale, scale]}
       >
         <icosahedronGeometry args={[1, 1]} />
         <meshBasicMaterial
@@ -207,7 +211,7 @@ export default function InteractiveObject({
         />
       </mesh>
 
-      {/* Lumière ambiante */}
+      {/* Lumières */}
       <pointLight position={[2, 2, 2]} intensity={0.5} color={getModeColor()} />
       <pointLight position={[-2, -2, -2]} intensity={0.3} color="#ffffff" />
     </group>

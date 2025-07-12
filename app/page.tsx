@@ -8,86 +8,20 @@ import CustomCursor from "@/components/custom-cursor"
 import IntroSequence from "@/components/intro-sequence"
 import ContactForm from "@/components/contact-form"
 
-// Charger les composants 3D côté client uniquement avec gestion d'erreur
-const Canvas = dynamic(() => import("@react-three/fiber").then(mod => ({ default: mod.Canvas })), {
-  ssr: false,
-  loading: () => (
-    <div className="h-[280px] lg:h-[400px] xl:h-[500px] w-full bg-gray-900 rounded-lg flex items-center justify-center">
-      <div className="text-gray-400 text-sm">Chargement de l'expérience 3D...</div>
-    </div>
-  )
-})
-
-const OrbitControls = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.OrbitControls })), {
-  ssr: false
-})
-
-const Environment = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.Environment })), {
-  ssr: false
-})
-
-const InteractiveObject = dynamic(() => import("@/components/interactive-object"), {
-  ssr: false
-})
-
 export type ContentMode = "vitrine" | "ecommerce" | "saas"
 
-// Composant 3D Scene avec gestion d'erreur
-function ThreeScene({ 
-  currentMode, 
-  onModeChange, 
-  isTransitioning, 
-  introComplete,
-  height 
-}: {
-  currentMode: ContentMode
-  onModeChange: (mode: ContentMode) => void
-  isTransitioning: boolean
-  introComplete: boolean
-  height: string
-}) {
-  console.log("[ThreeScene render] props:", { currentMode, isTransitioning, introComplete, height })  // <-- log render
-
-  const [error, setError] = useState<string | null>(null)
-
-  if (error) {
-    return (
-      <div className={`${height} w-full bg-gray-900 rounded-lg flex items-center justify-center border border-gray-700`}>
-        <div className="text-center p-6">
-          <div className="text-gray-400 text-sm mb-2">Expérience 3D non disponible</div>
-          <div className="text-xs text-gray-500">Utilisez la navigation en bas de page</div>
-        </div>
+// Charger le composant 3D COMPLÈTEMENT côté client
+const ThreeScene = dynamic(() => import("@/components/three-scene"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[280px] lg:h-[400px] xl:h-[500px] w-full bg-gray-900 rounded-lg flex items-center justify-center border border-gray-700">
+      <div className="text-center">
+        <div className="w-8 h-8 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+        <div className="text-gray-400 text-sm">Chargement de l'expérience 3D...</div>
       </div>
-    )
-  }
-
-  return (
-    <div className={`${height} w-full`}>
-      <Canvas 
-        camera={{ position: [0, 0, 4], fov: 85 }} 
-        className="w-full h-full"
-        onError={(error) => {
-          console.warn("Canvas error:", error)
-          setError("Erreur WebGL")
-        }}
-        gl={{ 
-          antialias: true,
-          alpha: true,
-          powerPreference: "high-performance"
-        }}
-      >
-        <Environment preset="studio" />
-        <InteractiveObject
-          currentMode={currentMode}
-          onModeChange={onModeChange}
-          isTransitioning={isTransitioning}
-          introComplete={introComplete}
-        />
-        <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
-      </Canvas>
     </div>
   )
-}
+})
 
 export default function Home() {
   const [currentMode, setCurrentMode] = useState<ContentMode>("vitrine")
@@ -215,7 +149,7 @@ export default function Home() {
             {/* Mobile Layout */}
             {isMobile ? (
               <div className="space-y-6 pb-32">
-                {/* Objet 3D Mobile avec fallback */}
+                {/* Objet 3D Mobile */}
                 <div className="relative">
                   <div ref={canvasRef}>
                     <ThreeScene
@@ -286,6 +220,72 @@ export default function Home() {
                               }`}
                             />
                           ))}
+                        </div>
+                        <div className="text-xs text-gray-400 mt-2 text-center">Cliquez pour changer de service</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Colonne droite - Contenu */}
+                <div ref={contentRef} className="space-y-4 lg:space-y-6 order-1 lg:order-2">
+                  <ContentSection mode={currentMode} onContactClick={() => setShowContact(true)} />
+                </div>
+              </div>
+            )}
+          </div>
+        </main>
+
+        {/* Navigation adaptative */}
+        <nav
+          className={`fixed z-30 ${
+            isMobile ? "bottom-4 left-4 right-4" : "bottom-4 lg:bottom-6 left-1/2 transform -translate-x-1/2"
+          }`}
+        >
+          <div
+            className={`bg-black/80 backdrop-blur-md rounded-full border border-white/20 shadow-2xl ${
+              isMobile ? "px-4 py-3" : "px-6 lg:px-8 py-3 lg:py-4"
+            }`}
+          >
+            <div
+              className={`flex items-center justify-center text-xs sm:text-sm uppercase tracking-wider ${
+                isMobile ? "space-x-4" : "space-x-6 lg:space-x-8"
+              }`}
+            >
+              <button
+                onClick={() => handleModeChange("vitrine")}
+                className={`transition-all duration-300 hover:text-white hover:scale-105 ${
+                  isMobile ? "py-2 px-3 rounded-full" : ""
+                } ${currentMode === "vitrine" ? "text-white font-medium" : "text-gray-400"}`}
+              >
+                {isMobile ? "Vitrine" : "Vitrine"}
+              </button>
+              <button
+                onClick={() => handleModeChange("ecommerce")}
+                className={`transition-all duration-300 hover:text-white hover:scale-105 ${
+                  isMobile ? "py-2 px-3 rounded-full" : ""
+                } ${currentMode === "ecommerce" ? "text-white font-medium" : "text-gray-400"}`}
+              >
+                E-commerce
+              </button>
+              <button
+                onClick={() => handleModeChange("saas")}
+                className={`transition-all duration-300 hover:text-white hover:scale-105 ${
+                  isMobile ? "py-2 px-3 rounded-full" : ""
+                } ${currentMode === "saas" ? "text-white font-medium" : "text-gray-400"}`}
+              >
+                SaaS
+              </button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Formulaire de contact modal */}
+        {showContact && <ContactForm onClose={() => setShowContact(false)} />}
+      </div>
+    </div>
+  )
+}
                         </div>
                         <div className="text-xs text-gray-400 mt-2 text-center">Cliquez pour changer de service</div>
                       </div>
