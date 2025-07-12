@@ -20,20 +20,32 @@ export default function ContactForm({ onClose }: ContactFormProps) {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   const modalRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   useEffect(() => {
     // Animation d'entrée
     if (modalRef.current) {
       gsap.fromTo(
         modalRef.current,
-        { opacity: 0, scale: 0.9 },
-        { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" },
+        { opacity: 0, scale: 0.9, y: isMobile ? 20 : 0 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "power2.out" },
       )
     }
-  }, [])
+  }, [isMobile])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -56,6 +68,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
       gsap.to(modalRef.current, {
         opacity: 0,
         scale: 0.9,
+        y: isMobile ? 20 : 0,
         duration: 0.2,
         ease: "power2.in",
         onComplete: onClose,
@@ -72,10 +85,15 @@ export default function ContactForm({ onClose }: ContactFormProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div ref={modalRef} className="bg-gray-900 rounded-lg w-full max-w-md border border-white/20">
+      <div
+        ref={modalRef}
+        className={`bg-gray-900 rounded-lg w-full border border-white/20 ${
+          isMobile ? "max-w-sm max-h-[90vh] overflow-y-auto" : "max-w-md"
+        }`}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
-          <h2 className="text-xl font-light">Demande de devis</h2>
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
+          <h2 className="text-lg sm:text-xl font-light">Demande de devis</h2>
           <button
             onClick={handleClose}
             className="p-2 hover:bg-white/10 rounded-full transition-colors"
@@ -86,7 +104,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
         </div>
 
         {/* Contenu */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {isSubmitted ? (
             <div className="text-center space-y-4">
               <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
@@ -109,7 +127,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-white/40 focus:outline-none transition-colors"
+                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-white/40 focus:outline-none transition-colors text-sm sm:text-base"
                   placeholder="Votre nom"
                 />
               </div>
@@ -126,7 +144,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-white/40 focus:outline-none transition-colors"
+                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-white/40 focus:outline-none transition-colors text-sm sm:text-base"
                   placeholder="votre@email.com"
                 />
               </div>
@@ -142,7 +160,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                   name="company"
                   value={formData.company}
                   onChange={handleChange}
-                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-white/40 focus:outline-none transition-colors"
+                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-white/40 focus:outline-none transition-colors text-sm sm:text-base"
                   placeholder="Nom de votre entreprise"
                 />
               </div>
@@ -155,7 +173,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                   value={formData.service}
                   onChange={handleChange}
                   required
-                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:border-white/40 focus:outline-none transition-colors"
+                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:border-white/40 focus:outline-none transition-colors text-sm sm:text-base"
                 >
                   <option value="vitrine">Site Vitrine</option>
                   <option value="ecommerce">E-commerce</option>
@@ -174,8 +192,8 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  rows={4}
-                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-white/40 focus:outline-none transition-colors resize-none"
+                  rows={isMobile ? 3 : 4}
+                  className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-white/40 focus:outline-none transition-colors resize-none text-sm sm:text-base"
                   placeholder="Décrivez votre projet..."
                 />
               </div>
@@ -189,12 +207,12 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                 {isSubmitting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-                    <span>Envoi en cours...</span>
+                    <span className="text-sm sm:text-base">Envoi en cours...</span>
                   </>
                 ) : (
                   <>
                     <Send className="w-4 h-4" />
-                    <span>Envoyer la demande</span>
+                    <span className="text-sm sm:text-base">Envoyer la demande</span>
                   </>
                 )}
               </button>
