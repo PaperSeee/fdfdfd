@@ -46,6 +46,8 @@ function ThreeScene({
   introComplete: boolean
   height: string
 }) {
+  console.log("[ThreeScene render] props:", { currentMode, isTransitioning, introComplete, height })  // <-- log render
+
   const [error, setError] = useState<string | null>(null)
 
   if (error) {

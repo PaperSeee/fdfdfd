@@ -24,8 +24,23 @@ export default function InteractiveObject({
   const [hovered, setHovered] = useState(false)
   const { viewport } = useThree()
 
-  // Animation continue de rotation - avec vérifications de sécurité
+  // Responsive sizing - plus sécurisé
+  const getScale = () => {
+    console.log("[getScale] viewport:", viewport) // <-- log viewport
+    try {
+      if (!viewport?.width) return 1.5
+      if (viewport.width < 4) return 1.2 // Mobile
+      if (viewport.width < 8) return 1.5 // Tablet
+      return 1.8 // Desktop
+    } catch (error) {
+      console.warn("Viewport scale error:", error)
+      return 1.5
+    }
+  }
+
+  // Animation continue de rotation
   useFrame((state) => {
+    console.log("[useFrame] meshRef:", meshRef.current, "wireframeRef:", wireframeRef.current) // <-- log refs
     if (!meshRef.current || !wireframeRef.current || !introComplete) return
 
     try {
@@ -54,7 +69,34 @@ export default function InteractiveObject({
     }
   })
 
+  // Animation d'entrée
+  useEffect(() => {
+    console.log("[entry useEffect] introComplete:", introComplete, "meshRef:", meshRef.current) // <-- log entrée
+    if (!introComplete || !meshRef.current || !wireframeRef.current) return
+
+    try {
+      const scale = getScale()
+      if (meshRef.current.scale && wireframeRef.current.scale) {
+        gsap.fromTo(
+          [meshRef.current.scale, wireframeRef.current.scale],
+          { x: 0, y: 0, z: 0 },
+          {
+            x: scale,
+            y: scale,
+            z: scale,
+            duration: 1.5,
+            ease: "back.out(1.7)",
+            delay: 0.3,
+          },
+        )
+      }
+    } catch (error) {
+      console.warn("Entry animation error:", error)
+    }
+  }, [introComplete])
+
   const handleClick = (event: any) => {
+    console.log("[handleClick] currentMode:", currentMode, "isTransitioning:", isTransitioning, "meshRef:", meshRef.current) // <-- log click
     event.stopPropagation()
 
     if (isTransitioning) return
@@ -98,58 +140,6 @@ export default function InteractiveObject({
     onModeChange(nextMode)
   }
 
-  // Couleurs selon le mode
-  const getModeColor = () => {
-    switch (currentMode) {
-      case "vitrine":
-        return "#ffffff"
-      case "ecommerce":
-        return "#10b981" // Vert
-      case "saas":
-        return "#3b82f6" // Bleu
-      default:
-        return "#ffffff"
-    }
-  }
-
-  // Responsive sizing - plus sécurisé
-  const getScale = () => {
-    try {
-      if (!viewport?.width) return 1.5
-      if (viewport.width < 4) return 1.2 // Mobile
-      if (viewport.width < 8) return 1.5 // Tablet
-      return 1.8 // Desktop
-    } catch (error) {
-      console.warn("Viewport scale error:", error)
-      return 1.5
-    }
-  }
-
-  // Animation d'entrée - avec vérifications
-  useEffect(() => {
-    if (!introComplete || !meshRef.current || !wireframeRef.current) return
-
-    try {
-      const scale = getScale()
-      if (meshRef.current.scale && wireframeRef.current.scale) {
-        gsap.fromTo(
-          [meshRef.current.scale, wireframeRef.current.scale],
-          { x: 0, y: 0, z: 0 },
-          {
-            x: scale,
-            y: scale,
-            z: scale,
-            duration: 1.5,
-            ease: "back.out(1.7)",
-            delay: 0.3,
-          },
-        )
-      }
-    } catch (error) {
-      console.warn("Entry animation error:", error)
-    }
-  }, [introComplete])
-
   const handlePointerOver = (e: any) => {
     e.stopPropagation()
     setHovered(true)
@@ -166,6 +156,20 @@ export default function InteractiveObject({
     }
   }
 
+  // Couleurs selon le mode
+  const getModeColor = () => {
+    switch (currentMode) {
+      case "vitrine":
+        return "#ffffff"
+      case "ecommerce":
+        return "#10b981" // Vert
+      case "saas":
+        return "#3b82f6" // Bleu
+      default:
+        return "#ffffff"
+    }
+  }
+
   return (
     <group position={[0, 0, 0]}>
       {/* Objet principal */}
@@ -174,7 +178,7 @@ export default function InteractiveObject({
         onClick={handleClick}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
-        scale={getScale()}
+        scale={[getScale(), getScale(), getScale()]} // <-- scale en tableau
       >
         <icosahedronGeometry args={[1, 1]} />
         <meshStandardMaterial
@@ -192,7 +196,7 @@ export default function InteractiveObject({
         onClick={handleClick}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
-        scale={getScale()}
+        scale={[getScale(), getScale(), getScale()]} // <-- scale en tableau
       >
         <icosahedronGeometry args={[1, 1]} />
         <meshBasicMaterial
