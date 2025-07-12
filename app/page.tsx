@@ -98,6 +98,14 @@ export default function Home() {
     }
   }, [safeIsTransitioning])
 
+  // Guard défensif pour détecter un accès à .S
+  useEffect(() => {
+    if (typeof currentMode === "object" && currentMode !== null && "S" in currentMode) {
+      // eslint-disable-next-line no-console
+      console.warn("🚨 [page] currentMode suspect:", currentMode)
+    }
+  }, [currentMode])
+
   useEffect(() => {
     if (introComplete && contentRef.current && canvasRef.current) {
       try {

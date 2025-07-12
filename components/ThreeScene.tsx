@@ -261,6 +261,14 @@ export default function ThreeScene({
     onModeChange(nextMode)
   }, [currentMode, isTransitioning, onModeChange])
 
+  // Guard défensif pour détecter un accès à .S
+  useEffect(() => {
+    if (typeof currentMode === "object" && currentMode !== null && "S" in currentMode) {
+      // eslint-disable-next-line no-console
+      console.warn("🚨 [ThreeScene] currentMode suspect:", currentMode)
+    }
+  }, [currentMode])
+
   // Rendu conditionnel
   if (!isClient) {
     return (

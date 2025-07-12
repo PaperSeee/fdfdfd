@@ -111,6 +111,16 @@ export default function ThreeScene({
     )
   }
 
+  // Ajout d'un log défensif pour détecter des props inattendues
+  useEffect(() => {
+    if (typeof currentMode === "object" && currentMode !== null && "S" in currentMode) {
+      // Si jamais currentMode est un objet avec une propriété S, log pour debug
+      // (ceci ne devrait jamais arriver, mais on log pour traquer le bug)
+      // eslint-disable-next-line no-console
+      console.warn("🚨 [three-scene] currentMode suspect:", currentMode)
+    }
+  }, [currentMode])
+
   return (
     <div className={`${safeHeight} w-full`}>
       <ErrorBoundary 

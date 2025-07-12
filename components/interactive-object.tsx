@@ -217,6 +217,14 @@ export default function InteractiveObject({
     }
   }
 
+  // Guard défensif pour détecter un accès à .S
+  useEffect(() => {
+    if (typeof currentMode === "object" && currentMode !== null && "S" in currentMode) {
+      // eslint-disable-next-line no-console
+      console.warn("🚨 [interactive-object] currentMode suspect:", currentMode)
+    }
+  }, [currentMode])
+
   if (!isClient) {
     return null
   }
