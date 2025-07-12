@@ -79,59 +79,76 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white overflow-hidden relative">
+      {/* Effet de particules en arrière-plan */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full opacity-20 animate-pulse" />
+        <div className="absolute top-3/4 right-1/3 w-1 h-1 bg-white rounded-full opacity-30 animate-pulse delay-1000" />
+        <div className="absolute bottom-1/4 left-2/3 w-1 h-1 bg-white rounded-full opacity-25 animate-pulse delay-2000" />
+        <div className="absolute top-1/2 right-1/4 w-1 h-1 bg-white rounded-full opacity-15 animate-pulse delay-3000" />
+      </div>
+
       {!introComplete && <IntroSequence onComplete={() => setIntroComplete(true)} />}
 
       <div className={`transition-opacity duration-1000 ${introComplete ? "opacity-100" : "opacity-0"}`}>
         <CustomCursor />
 
         {/* Header */}
-        <header className="relative z-30 p-4 lg:p-6">
+        <header className="relative z-30 p-6 lg:p-8">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-xl lg:text-2xl font-light mb-1">Solutions Digitales Premium</h1>
-            <p className="text-gray-400 text-sm">Cliquez sur l'objet 3D pour découvrir nos services</p>
+            <h1 className="text-2xl lg:text-3xl font-light mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              Solutions Digitales Premium
+            </h1>
+            <p className="text-gray-400 text-sm lg:text-base max-w-2xl mx-auto">
+              Découvrez nos services en interagissant avec l'objet 3D ci-dessous
+            </p>
           </div>
         </header>
 
         {/* Contenu principal - Layout côte à côte */}
-        <main className="relative z-20 px-4 lg:px-6">
+        <main className="relative z-20 px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[600px]">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[700px]">
               {/* Colonne gauche - Objet 3D */}
-              <div className="relative">
-                <div ref={canvasRef} className="h-[400px] lg:h-[500px] w-full">
-                  <Canvas camera={{ position: [0, 0, 5], fov: 75 }} className="w-full h-full">
-                    <Environment preset="studio" />
-                    <InteractiveObject
-                      currentMode={currentMode}
-                      onModeChange={handleModeChange}
-                      isTransitioning={isTransitioning}
-                      introComplete={introComplete}
-                    />
-                    <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
-                  </Canvas>
-                </div>
+              <div className="relative order-2 lg:order-1">
+                <div className="relative">
+                  <div ref={canvasRef} className="h-[450px] lg:h-[550px] w-full">
+                    <Canvas camera={{ position: [0, 0, 5], fov: 75 }} className="w-full h-full">
+                      <Environment preset="studio" />
+                      <InteractiveObject
+                        currentMode={currentMode}
+                        onModeChange={handleModeChange}
+                        isTransitioning={isTransitioning}
+                        introComplete={introComplete}
+                      />
+                      <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
+                    </Canvas>
+                  </div>
 
-                {/* Instructions superposées */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-black/60 backdrop-blur-sm rounded-lg p-3 border border-white/20">
-                    <div className="text-white text-sm font-medium text-center">{getModeTitle()}</div>
-                    <div className="flex justify-center space-x-2 mt-2">
-                      {(["vitrine", "ecommerce", "saas"] as ContentMode[]).map((mode) => (
-                        <div
-                          key={mode}
-                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                            currentMode === mode ? "bg-white" : "bg-gray-600"
-                          }`}
-                        />
-                      ))}
+                  {/* Instructions superposées */}
+                  <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-black/70 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-2xl">
+                      <div className="text-white text-base font-medium text-center mb-3">{getModeTitle()}</div>
+                      <div className="flex justify-center space-x-3">
+                        {(["vitrine", "ecommerce", "saas"] as ContentMode[]).map((mode) => (
+                          <div
+                            key={mode}
+                            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                              currentMode === mode ? "bg-white shadow-lg" : "bg-gray-600"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <div className="text-xs text-gray-400 mt-2 text-center">
+                        Cliquez pour changer de service
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Colonne droite - Contenu */}
-              <div ref={contentRef} className="space-y-6">
+              <div ref={contentRef} className="space-y-8 order-1 lg:order-2">
                 <ContentSection mode={currentMode} onContactClick={() => setShowContact(true)} />
               </div>
             </div>
@@ -140,28 +157,28 @@ export default function Home() {
 
         {/* Navigation en bas */}
         <nav className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-30">
-          <div className="bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20">
-            <div className="flex items-center space-x-6 text-xs uppercase tracking-wider">
+          <div className="bg-black/80 backdrop-blur-md rounded-full px-8 py-4 border border-white/20 shadow-2xl">
+            <div className="flex items-center space-x-8 text-sm uppercase tracking-wider">
               <button
                 onClick={() => handleModeChange("vitrine")}
-                className={`transition-colors hover:text-white ${
-                  currentMode === "vitrine" ? "text-white" : "text-gray-400"
+                className={`transition-all duration-300 hover:text-white hover:scale-105 ${
+                  currentMode === "vitrine" ? "text-white font-medium" : "text-gray-400"
                 }`}
               >
                 Vitrine
               </button>
               <button
                 onClick={() => handleModeChange("ecommerce")}
-                className={`transition-colors hover:text-white ${
-                  currentMode === "ecommerce" ? "text-white" : "text-gray-400"
+                className={`transition-all duration-300 hover:text-white hover:scale-105 ${
+                  currentMode === "ecommerce" ? "text-white font-medium" : "text-gray-400"
                 }`}
               >
                 E-commerce
               </button>
               <button
                 onClick={() => handleModeChange("saas")}
-                className={`transition-colors hover:text-white ${
-                  currentMode === "saas" ? "text-white" : "text-gray-400"
+                className={`transition-all duration-300 hover:text-white hover:scale-105 ${
+                  currentMode === "saas" ? "text-white font-medium" : "text-gray-400"
                 }`}
               >
                 SaaS

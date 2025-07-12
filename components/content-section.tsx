@@ -26,56 +26,94 @@ export default function ContentSection({ mode, onContactClick }: ContentSectionP
       </div>
 
       {/* Prix */}
-      <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium">Tarifs Site Vitrine</h3>
-          <Euro className="w-5 h-5 text-gray-400" />
+      <div className="bg-gradient-to-r from-white/5 to-white/10 rounded-xl p-5 border border-white/10 backdrop-blur-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-medium text-lg">Tarifs Site Vitrine</h3>
+          <div className="flex items-center space-x-2">
+            <span className="text-xs text-green-400 bg-green-500/20 px-2 py-1 rounded-full">Tarif étudiant</span>
+            <Euro className="w-5 h-5 text-gray-400" />
+          </div>
         </div>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-400">Site 5 pages</span>
-            <span>1 500€</span>
+        <div className="space-y-3 text-sm">
+          <div className="flex justify-between items-center bg-white/5 rounded-lg p-3">
+            <div>
+              <span className="text-white font-medium">Site 1 page</span>
+              <div className="text-gray-400 text-xs">Landing page optimisée</div>
+            </div>
+            <span className="text-xl font-bold text-white">250€</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Site 10 pages</span>
-            <span>2 500€</span>
+          <div className="flex justify-between items-center bg-white/5 rounded-lg p-3">
+            <div>
+              <span className="text-white font-medium">Site 3-5 pages</span>
+              <div className="text-gray-400 text-xs">Site vitrine complet</div>
+            </div>
+            <span className="text-xl font-bold text-white">450€</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Site sur-mesure</span>
-            <span>À partir de 3 500€</span>
+          <div className="flex justify-between items-center bg-white/5 rounded-lg p-3">
+            <div>
+              <span className="text-white font-medium">Site sur-mesure</span>
+              <div className="text-gray-400 text-xs">Fonctionnalités avancées</div>
+            </div>
+            <span className="text-xl font-bold text-white">À partir de 650€</span>
           </div>
         </div>
       </div>
 
       {/* Fonctionnalités */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <Zap className="w-4 h-4 text-white" />
-            <span className="text-sm">Design Sur-Mesure</span>
+      <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+        <h4 className="font-medium mb-4 text-white">Inclus dans chaque site</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                <Zap className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-white">Design Sur-Mesure</span>
+                <div className="text-xs text-gray-400">Unique à votre marque</div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                <Star className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-white">SEO Optimisé</span>
+                <div className="text-xs text-gray-400">Référencement inclus</div>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Star className="w-4 h-4 text-white" />
-            <span className="text-sm">SEO Optimisé</span>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <Users className="w-4 h-4 text-white" />
-            <span className="text-sm">Responsive Design</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Clock className="w-4 h-4 text-white" />
-            <span className="text-sm">Livraison 2-3 semaines</span>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                <Users className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-white">Responsive Design</span>
+                <div className="text-xs text-gray-400">Mobile & desktop</div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                <Clock className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-white">Livraison rapide</span>
+                <div className="text-xs text-gray-400">1-2 semaines</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <button
         onClick={onContactClick}
-        className="w-full bg-white text-black py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+        className="w-full bg-gradient-to-r from-white to-gray-200 text-black py-4 rounded-xl font-semibold hover:from-gray-200 hover:to-gray-300 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
       >
-        Demander un devis gratuit
+        <div className="flex items-center justify-center space-x-2">
+          <span>Demander un devis gratuit</span>
+          <Euro className="w-4 h-4" />
+        </div>
       </button>
     </div>
   )
@@ -97,52 +135,90 @@ export default function ContentSection({ mode, onContactClick }: ContentSectionP
       </div>
 
       {/* Prix */}
-      <div className="bg-green-500/10 rounded-lg p-4 border border-green-500/20">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium text-green-300">Tarifs E-commerce</h3>
-          <Euro className="w-5 h-5 text-green-400" />
+      <div className="bg-gradient-to-r from-green-500/10 to-green-500/20 rounded-xl p-5 border border-green-500/20 backdrop-blur-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-medium text-lg text-green-300">Tarifs E-commerce</h3>
+          <div className="flex items-center space-x-2">
+            <span className="text-xs text-green-400 bg-green-500/20 px-2 py-1 rounded-full">Tarif étudiant</span>
+            <Euro className="w-5 h-5 text-green-400" />
+          </div>
         </div>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-400">Boutique Standard</span>
-            <span className="text-green-300">2 500€</span>
+        <div className="space-y-3 text-sm">
+          <div className="flex justify-between items-center bg-green-500/10 rounded-lg p-3">
+            <div>
+              <span className="text-green-200 font-medium">Boutique Simple</span>
+              <div className="text-gray-400 text-xs">10-20 produits</div>
+            </div>
+            <span className="text-xl font-bold text-green-300">750€</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Boutique Premium</span>
-            <span className="text-green-300">4 500€</span>
+          <div className="flex justify-between items-center bg-green-500/10 rounded-lg p-3">
+            <div>
+              <span className="text-green-200 font-medium">Boutique Standard</span>
+              <div className="text-gray-400 text-xs">50+ produits, paiements</div>
+            </div>
+            <span className="text-xl font-bold text-green-300">1 200€</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Marketplace</span>
-            <span className="text-green-300">À partir de 7 500€</span>
+          <div className="flex justify-between items-center bg-green-500/10 rounded-lg p-3">
+            <div>
+              <span className="text-green-200 font-medium">E-commerce Avancé</span>
+              <div className="text-gray-400 text-xs">Gestion stocks, analytics</div>
+            </div>
+            <span className="text-xl font-bold text-green-300">À partir de 1 800€</span>
           </div>
         </div>
       </div>
 
       {/* Fonctionnalités */}
-      <div className="space-y-3">
-        <div className="flex items-center space-x-2">
-          <CreditCard className="w-4 h-4 text-green-400" />
-          <span className="text-sm">Paiements sécurisés (Stripe, PayPal)</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Zap className="w-4 h-4 text-green-400" />
-          <span className="text-sm">Gestion automatisée des stocks</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Users className="w-4 h-4 text-green-400" />
-          <span className="text-sm">Espace client personnalisé</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Headphones className="w-4 h-4 text-green-400" />
-          <span className="text-sm">Support technique inclus</span>
+      <div className="bg-green-500/10 rounded-xl p-5 border border-green-500/20">
+        <h4 className="font-medium mb-4 text-green-300">Fonctionnalités E-commerce</h4>
+        <div className="space-y-3">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+              <CreditCard className="w-4 h-4 text-green-400" />
+            </div>
+            <div>
+              <span className="text-sm font-medium text-green-200">Paiements sécurisés</span>
+              <div className="text-xs text-gray-400">Stripe, PayPal intégrés</div>
+            </div>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+              <Zap className="w-4 h-4 text-green-400" />
+            </div>
+            <div>
+              <span className="text-sm font-medium text-green-200">Gestion des stocks</span>
+              <div className="text-xs text-gray-400">Automatisation complète</div>
+            </div>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+              <Users className="w-4 h-4 text-green-400" />
+            </div>
+            <div>
+              <span className="text-sm font-medium text-green-200">Espace client</span>
+              <div className="text-xs text-gray-400">Commandes et historique</div>
+            </div>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+              <Headphones className="w-4 h-4 text-green-400" />
+            </div>
+            <div>
+              <span className="text-sm font-medium text-green-200">Support technique</span>
+              <div className="text-xs text-gray-400">3 mois inclus</div>
+            </div>
+          </div>
         </div>
       </div>
 
       <button
         onClick={onContactClick}
-        className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors"
+        className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
       >
-        Lancer mon e-commerce
+        <div className="flex items-center justify-center space-x-2">
+          <span>Lancer mon e-commerce</span>
+          <ShoppingBag className="w-4 h-4" />
+        </div>
       </button>
     </div>
   )
@@ -164,24 +240,40 @@ export default function ContentSection({ mode, onContactClick }: ContentSectionP
       </div>
 
       {/* Prix */}
-      <div className="bg-blue-500/10 rounded-lg p-4 border border-blue-500/20">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium text-blue-300">Tarifs SaaS</h3>
-          <Euro className="w-5 h-5 text-blue-400" />
+      <div className="bg-gradient-to-r from-blue-500/10 to-blue-500/20 rounded-xl p-5 border border-blue-500/20 backdrop-blur-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-medium text-lg text-blue-300">Tarifs SaaS</h3>
+          <div className="flex items-center space-x-2">
+            <span className="text-xs text-blue-400 bg-blue-500/20 px-2 py-1 rounded-full">Tarif étudiant</span>
+            <Euro className="w-5 h-5 text-blue-400" />
+          </div>
         </div>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-400">MVP (3 mois)</span>
-            <span className="text-blue-300">15 000€</span>
+        <div className="space-y-3 text-sm">
+          <div className="flex justify-between items-center bg-blue-500/10 rounded-lg p-3">
+            <div>
+              <span className="text-blue-200 font-medium">App Simple</span>
+              <div className="text-gray-400 text-xs">Dashboard basique</div>
+            </div>
+            <span className="text-xl font-bold text-blue-300">2 500€</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Plateforme complète</span>
-            <span className="text-blue-300">25 000€ - 50 000€</span>
+          <div className="flex justify-between items-center bg-blue-500/10 rounded-lg p-3">
+            <div>
+              <span className="text-blue-200 font-medium">MVP Complet</span>
+              <div className="text-gray-400 text-xs">3-4 mois de dev</div>
+            </div>
+            <span className="text-xl font-bold text-blue-300">6 500€</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Maintenance mensuelle</span>
-            <span className="text-blue-300">500€ - 2 000€</span>
+          <div className="flex justify-between items-center bg-blue-500/10 rounded-lg p-3">
+            <div>
+              <span className="text-blue-200 font-medium">Plateforme Avancée</span>
+              <div className="text-gray-400 text-xs">API, intégrations</div>
+            </div>
+            <span className="text-xl font-bold text-blue-300">À partir de 12 000€</span>
           </div>
+        </div>
+        <div className="mt-4 p-3 bg-blue-500/10 rounded-lg">
+          <div className="text-xs text-blue-300 font-medium">Maintenance mensuelle</div>
+          <div className="text-blue-200">150€ - 500€/mois selon complexité</div>
         </div>
       </div>
 
