@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, Suspense } from "react"
+import { useState, Suspense, useEffect } from "react"
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls, Environment } from "@react-three/drei"
+import { ErrorBoundary } from "@/components/error-boundary"
 import InteractiveObject from "@/components/interactive-object"
 import type { ContentMode } from "@/app/page"
 
@@ -34,20 +35,44 @@ export default function ThreeScene({
   height
 }: ThreeSceneProps) {
   const [hasWebGL, setHasWebGL] = useState(true)
+  const [isClient, setIsClient] = useState(false)
 
   // Vérifier le support WebGL côté client
-  const checkWebGLSupport = () => {
-    try {
-      const canvas = document.createElement('canvas')
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
-      return !!gl
-    } catch (e) {
-      return false
+  useEffect(() => {
+    setIsClient(true)
+    
+    if (typeof window !== 'undefined') {
+      const checkWebGLSupport = () => {
+        try {
+          const canvas = document.createElement('canvas')
+          const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
+          canvas.remove()
+          return !!gl
+        } catch (e) {
+          return false
+        }
+      }
+      
+      setHasWebGL(checkWebGLSupport())
     }
+  }, [])
+
+  // Ne pas rendre avant que le client soit prêt
+  if (!isClient) {
+    return (
+      <div className={height}>
+        <div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center border border-gray-700">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <div className="text-gray-400 text-sm">Chargement 3D...</div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   // Si pas de support WebGL, afficher le fallback
-  if (typeof window !== 'undefined' && !checkWebGLSupport()) {
+  if (!hasWebGL) {
     return (
       <div className={height}>
         <WebGLFallback />
@@ -57,49 +82,47 @@ export default function ThreeScene({
 
   return (
     <div className={`${height} w-full`}>
-      <Suspense fallback={
-        <div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-8 h-8 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <div className="text-gray-400 text-sm">Chargement 3D...</div>
+      <ErrorBoundary fallback={<WebGLFallback />}>
+        <Suspense fallback={
+          <div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-8 h-8 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+              <div className="text-gray-400 text-sm">Chargement 3D...</div>
+            </div>
           </div>
-        </div>
-      }>
-        <Canvas
-          camera={{ position: [0, 0, 4], fov: 85 }}
-          className="w-full h-full"
-          onCreated={({ gl }) => {
-            // Configurer le renderer
-            gl.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-            gl.physicallyCorrectLights = true
-          }}
-          onError={(error) => {
-            console.warn("Canvas error:", error)
-            setHasWebGL(false)
-          }}
-          gl={{
-            antialias: true,
-            alpha: true,
-            powerPreference: "high-performance",
-            failIfMajorPerformanceCaveat: false
-          }}
-          fallback={<WebGLFallback />}
-        >
-          <Environment preset="studio" />
-          <InteractiveObject
-            currentMode={currentMode}
-            onModeChange={onModeChange}
-            isTransitioning={isTransitioning}
-            introComplete={introComplete}
-          />
-          <OrbitControls 
-            enableZoom={false} 
-            enablePan={false} 
-            enableRotate={false} 
-            enabled={introComplete}
-          />
-        </Canvas>
-      </Suspense>
+        }>
+          <Canvas
+            camera={{ position: [0, 0, 4], fov: 85 }}
+            className="w-full h-full"
+            onCreated={({ gl }) => {
+              // Configurer le renderer
+              gl.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+              gl.physicallyCorrectLights = true
+            }}
+            gl={{
+              antialias: true,
+              alpha: true,
+              powerPreference: "high-performance",
+              failIfMajorPerformanceCaveat: false
+            }}
+            fallback={<WebGLFallback />}
+          >
+            <Environment preset="studio" />
+            <InteractiveObject
+              currentMode={currentMode}
+              onModeChange={onModeChange}
+              isTransitioning={isTransitioning}
+              introComplete={introComplete}
+            />
+            <OrbitControls 
+              enableZoom={false} 
+              enablePan={false} 
+              enableRotate={false} 
+              enabled={introComplete}
+            />
+          </Canvas>
+        </Suspense>
+      </ErrorBoundary>
     </div>
   )
 }

@@ -10,7 +10,7 @@ import ContactForm from "@/components/contact-form"
 
 export type ContentMode = "vitrine" | "ecommerce" | "saas"
 
-// Charger le composant 3D COMPLÈTEMENT côté client
+// Charger le composant 3D COMPLÈTEMENT côté client avec fallback
 const ThreeScene = dynamic(() => import("@/components/three-scene"), {
   ssr: false,
   loading: () => (
@@ -18,6 +18,19 @@ const ThreeScene = dynamic(() => import("@/components/three-scene"), {
       <div className="text-center">
         <div className="w-8 h-8 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
         <div className="text-gray-400 text-sm">Chargement de l'expérience 3D...</div>
+      </div>
+    </div>
+  )
+})
+
+// Alternative avec le nouveau composant ThreeScene
+const AlternativeThreeScene = dynamic(() => import("@/components/ThreeScene"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[280px] lg:h-[400px] xl:h-[500px] w-full bg-gray-900 rounded-lg flex items-center justify-center border border-gray-700">
+      <div className="text-center">
+        <div className="w-8 h-8 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+        <div className="text-gray-400 text-sm">Chargement 3D...</div>
       </div>
     </div>
   )
@@ -32,6 +45,8 @@ export default function Home() {
   const [introComplete, setIntroComplete] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [isClient, setIsClient] = useState(false)
+  // Utilisation du composant avec protection SSR
+  const [useAlternative, setUseAlternative] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
@@ -152,13 +167,24 @@ export default function Home() {
                 {/* Objet 3D Mobile */}
                 <div className="relative">
                   <div ref={canvasRef}>
-                    <ThreeScene
-                      currentMode={currentMode}
-                      onModeChange={handleModeChange}
-                      isTransitioning={isTransitioning}
-                      introComplete={introComplete}
-                      height="h-[280px]"
-                    />
+                    {/* Utiliser le composant 3D choisi */}
+                    {useAlternative ? (
+                      <AlternativeThreeScene
+                        currentMode={currentMode}
+                        height="h-[280px]"
+                        introComplete={introComplete}
+                        isTransitioning={isTransitioning}
+                        onModeChange={handleModeChange}
+                      />
+                    ) : (
+                      <ThreeScene
+                        currentMode={currentMode}
+                        onModeChange={handleModeChange}
+                        isTransitioning={isTransitioning}
+                        introComplete={introComplete}
+                        height="h-[280px]"
+                      />
+                    )}
                   </div>
 
                   {/* Mobile Mode Indicator */}
@@ -198,13 +224,24 @@ export default function Home() {
                 <div className="relative order-2 lg:order-1">
                   <div className="relative">
                     <div ref={canvasRef}>
-                      <ThreeScene
-                        currentMode={currentMode}
-                        onModeChange={handleModeChange}
-                        isTransitioning={isTransitioning}
-                        introComplete={introComplete}
-                        height="h-[350px] lg:h-[400px] xl:h-[500px]"
-                      />
+                      {/* Utiliser le composant 3D choisi */}
+                      {useAlternative ? (
+                        <AlternativeThreeScene
+                          currentMode={currentMode}
+                          height="h-[350px] lg:h-[400px] xl:h-[500px]"
+                          introComplete={introComplete}
+                          isTransitioning={isTransitioning}
+                          onModeChange={handleModeChange}
+                        />
+                      ) : (
+                        <ThreeScene
+                          currentMode={currentMode}
+                          onModeChange={handleModeChange}
+                          isTransitioning={isTransitioning}
+                          introComplete={introComplete}
+                          height="h-[350px] lg:h-[400px] xl:h-[500px]"
+                        />
+                      )}
                     </div>
 
                     {/* Instructions superposées */}
@@ -286,4 +323,3 @@ export default function Home() {
     </div>
   )
 }
-                        
