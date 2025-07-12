@@ -95,9 +95,13 @@ export default function ThreeScene({
             camera={{ position: [0, 0, 4], fov: 85 }}
             className="w-full h-full"
             onCreated={({ gl }) => {
-              // Configurer le renderer
-              gl.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-              gl.physicallyCorrectLights = true
+              // Configurer le renderer avec vérifications
+              if (gl && typeof window !== 'undefined') {
+                gl.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+                if ('physicallyCorrectLights' in gl) {
+                  gl.physicallyCorrectLights = true
+                }
+              }
             }}
             gl={{
               antialias: true,

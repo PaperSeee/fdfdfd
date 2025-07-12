@@ -50,9 +50,9 @@ export default function InteractiveObject({
     if (!meshRef.current || !wireframeRef.current || !introComplete || !isClient) return
 
     try {
-      const time = state.clock.elapsedTime
+      const time = state.clock?.elapsedTime || 0
 
-      // Rotation continue
+      // Rotation continue avec vérifications
       if (meshRef.current.rotation && wireframeRef.current.rotation) {
         meshRef.current.rotation.y += 0.01
         wireframeRef.current.rotation.y += 0.01
@@ -60,7 +60,7 @@ export default function InteractiveObject({
         wireframeRef.current.rotation.x = Math.sin(time * 0.5) * 0.1
       }
 
-      // Effet de respiration
+      // Effet de respiration avec vérifications
       if (meshRef.current.scale && wireframeRef.current.scale) {
         const scale = 1 + Math.sin(time * 0.8) * 0.05
         const finalScale = hovered ? scale * 1.2 : scale
