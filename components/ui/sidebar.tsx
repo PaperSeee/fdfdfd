@@ -5,7 +5,8 @@ import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
 import { PanelLeft } from "lucide-react"
 
-import { useIsMobile } from "@/hooks/use-mobile"
+// Import sécurisé avec fallback
+import { useIsMobile } from "@/components/ui/use-mobile"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -67,7 +68,16 @@ const SidebarProvider = React.forwardRef<
     },
     ref
   ) => {
-    const isMobile = useIsMobile()
+    // Vérification sécurisée du hook
+    const isMobile = React.useMemo(() => {
+      try {
+        return useIsMobile()
+      } catch (error) {
+        console.warn('Error in useIsMobile hook:', error)
+        return false
+      }
+    }, [])
+
     const [openMobile, setOpenMobile] = React.useState(false)
 
     // This is the internal state of the sidebar.
@@ -175,7 +185,15 @@ const Sidebar = React.forwardRef<
     },
     ref
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const sidebarContext = React.useContext(SidebarContext)
+    
+    // Vérification du contexte
+    if (!sidebarContext) {
+      console.warn('Sidebar must be used within a SidebarProvider')
+      return null
+    }
+
+    const { isMobile, state, openMobile, setOpenMobile } = sidebarContext
 
     if (collapsible === "none") {
       return (

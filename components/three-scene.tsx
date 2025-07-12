@@ -36,6 +36,7 @@ export default function ThreeScene({
 }: ThreeSceneProps) {
   const [hasWebGL, setHasWebGL] = useState(true)
   const [isClient, setIsClient] = useState(false)
+  const [renderError, setRenderError] = useState<string | null>(null)
 
   // Vérifier le support WebGL côté client
   useEffect(() => {
@@ -57,6 +58,13 @@ export default function ThreeScene({
     }
   }, [])
 
+  // Gérer les erreurs de rendu
+  const handleRenderError = (error: Error, errorInfo: React.ErrorInfo) => {
+    console.error('Three.js render error:', error, errorInfo)
+    setRenderError(error.message)
+    setHasWebGL(false)
+  }
+
   // Ne pas rendre avant que le client soit prêt
   if (!isClient) {
     return (
@@ -71,8 +79,8 @@ export default function ThreeScene({
     )
   }
 
-  // Si pas de support WebGL, afficher le fallback
-  if (!hasWebGL) {
+  // Si pas de support WebGL ou erreur de rendu, afficher le fallback
+  if (!hasWebGL || renderError) {
     return (
       <div className={height}>
         <WebGLFallback />
@@ -82,7 +90,10 @@ export default function ThreeScene({
 
   return (
     <div className={`${height} w-full`}>
-      <ErrorBoundary fallback={<WebGLFallback />}>
+      <ErrorBoundary 
+        fallback={<WebGLFallback />}
+        onError={handleRenderError}
+      >
         <Suspense fallback={
           <div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center">
             <div className="text-center">
@@ -95,12 +106,17 @@ export default function ThreeScene({
             camera={{ position: [0, 0, 4], fov: 85 }}
             className="w-full h-full"
             onCreated={({ gl }) => {
-              // Configurer le renderer avec vérifications
-              if (gl && typeof window !== 'undefined') {
-                gl.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
-                if ('physicallyCorrectLights' in gl) {
-                  gl.physicallyCorrectLights = true
+              try {
+                // Configurer le renderer avec vérifications
+                if (gl && typeof window !== 'undefined') {
+                  gl.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+                  // Vérification de la propriété avant usage
+                  if (gl.physicallyCorrectLights !== undefined) {
+                    gl.physicallyCorrectLights = true
+                  }
                 }
+              } catch (error) {
+                console.warn('Error configuring WebGL renderer:', error)
               }
             }}
             gl={{
