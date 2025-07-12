@@ -33,16 +33,24 @@ export default function InteractiveObject({
       meshRef.current.rotation.y += 0.01
       wireframeRef.current.rotation.y += 0.01
 
-      // Mouvement subtil
-      meshRef.current.rotation.x = Math.sin(time * 0.5) * 0.1
-      wireframeRef.current.rotation.x = Math.sin(time * 0.5) * 0.1
+      // Mouvement subtil - Sécurisé
+      if (meshRef.current.rotation) {
+        meshRef.current.rotation.x = Math.sin(time * 0.5) * 0.1
+      }
+      if (wireframeRef.current.rotation) {
+        wireframeRef.current.rotation.x = Math.sin(time * 0.5) * 0.1
+      }
 
       // Effet de respiration
       const scale = 1 + Math.sin(time * 0.8) * 0.05
       const finalScale = hovered ? scale * 1.2 : scale
 
-      meshRef.current.scale.setScalar(finalScale)
-      wireframeRef.current.scale.setScalar(finalScale * 1.02)
+      if (meshRef.current.scale) {
+        meshRef.current.scale.setScalar(finalScale)
+      }
+      if (wireframeRef.current.scale) {
+        wireframeRef.current.scale.setScalar(finalScale * 1.02)
+      }
     }
   })
 
@@ -58,25 +66,29 @@ export default function InteractiveObject({
     const currentIndex = modes.indexOf(currentMode)
     const nextMode = modes[(currentIndex + 1) % modes.length]
 
-    // Animation de l'objet lors du clic
+    // Animation de l'objet lors du clic - Sécurisée
     if (meshRef.current && wireframeRef.current) {
       // Animation de rotation
-      gsap.to([meshRef.current.rotation, wireframeRef.current.rotation], {
-        y: "+=6.28", // 2π radians = 360°
-        duration: 1,
-        ease: "power2.inOut",
-      })
+      if (meshRef.current.rotation && wireframeRef.current.rotation) {
+        gsap.to([meshRef.current.rotation, wireframeRef.current.rotation], {
+          y: "+=6.28", // 2π radians = 360°
+          duration: 1,
+          ease: "power2.inOut",
+        })
+      }
 
       // Animation de scale
-      gsap.to([meshRef.current.scale, wireframeRef.current.scale], {
-        x: 1.5,
-        y: 1.5,
-        z: 1.5,
-        duration: 0.15,
-        ease: "power2.out",
-        yoyo: true,
-        repeat: 1,
-      })
+      if (meshRef.current.scale && wireframeRef.current.scale) {
+        gsap.to([meshRef.current.scale, wireframeRef.current.scale], {
+          x: 1.5,
+          y: 1.5,
+          z: 1.5,
+          duration: 0.15,
+          ease: "power2.out",
+          yoyo: true,
+          repeat: 1,
+        })
+      }
     }
 
     onModeChange(nextMode)
@@ -96,8 +108,9 @@ export default function InteractiveObject({
     }
   }
 
-  // Responsive sizing
+  // Responsive sizing - Sécurisé
   const getScale = () => {
+    if (!viewport) return 1.5
     if (viewport.width < 4) return 1.2 // Mobile
     if (viewport.width < 8) return 1.5 // Tablet
     return 1.8 // Desktop
@@ -106,20 +119,39 @@ export default function InteractiveObject({
   // Animation d'entrée
   useEffect(() => {
     if (introComplete && meshRef.current && wireframeRef.current) {
-      gsap.fromTo(
-        [meshRef.current.scale, wireframeRef.current.scale],
-        { x: 0, y: 0, z: 0 },
-        {
-          x: getScale(),
-          y: getScale(),
-          z: getScale(),
-          duration: 1.5,
-          ease: "back.out(1.7)",
-          delay: 0.3,
-        },
-      )
+      const scale = getScale()
+      if (meshRef.current.scale && wireframeRef.current.scale) {
+        gsap.fromTo(
+          [meshRef.current.scale, wireframeRef.current.scale],
+          { x: 0, y: 0, z: 0 },
+          {
+            x: scale,
+            y: scale,
+            z: scale,
+            duration: 1.5,
+            ease: "back.out(1.7)",
+            delay: 0.3,
+          },
+        )
+      }
     }
   }, [introComplete])
+
+  const handlePointerOver = (e: any) => {
+    e.stopPropagation()
+    setHovered(true)
+    if (typeof document !== 'undefined') {
+      document.body.style.cursor = "pointer"
+    }
+  }
+
+  const handlePointerOut = (e: any) => {
+    e.stopPropagation()
+    setHovered(false)
+    if (typeof document !== 'undefined') {
+      document.body.style.cursor = "auto"
+    }
+  }
 
   return (
     <group position={[0, 0, 0]}>
@@ -127,16 +159,8 @@ export default function InteractiveObject({
       <mesh
         ref={meshRef}
         onClick={handleClick}
-        onPointerOver={(e) => {
-          e.stopPropagation()
-          setHovered(true)
-          document.body.style.cursor = "pointer"
-        }}
-        onPointerOut={(e) => {
-          e.stopPropagation()
-          setHovered(false)
-          document.body.style.cursor = "auto"
-        }}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
         scale={getScale()}
       >
         <icosahedronGeometry args={[1, 1]} />
@@ -147,16 +171,8 @@ export default function InteractiveObject({
       <mesh
         ref={wireframeRef}
         onClick={handleClick}
-        onPointerOver={(e) => {
-          e.stopPropagation()
-          setHovered(true)
-          document.body.style.cursor = "pointer"
-        }}
-        onPointerOut={(e) => {
-          e.stopPropagation()
-          setHovered(false)
-          document.body.style.cursor = "auto"
-        }}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
         scale={getScale()}
       >
         <icosahedronGeometry args={[1, 1]} />

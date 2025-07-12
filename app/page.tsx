@@ -1,14 +1,34 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Canvas } from "@react-three/fiber"
-import { OrbitControls, Environment } from "@react-three/drei"
+import dynamic from "next/dynamic"
 import { gsap } from "gsap"
-import InteractiveObject from "@/components/interactive-object"
 import ContentSection from "@/components/content-section"
 import CustomCursor from "@/components/custom-cursor"
 import IntroSequence from "@/components/intro-sequence"
 import ContactForm from "@/components/contact-form"
+
+// Charger les composants 3D côté client uniquement
+const Canvas = dynamic(() => import("@react-three/fiber").then(mod => ({ default: mod.Canvas })), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[280px] lg:h-[400px] xl:h-[500px] w-full bg-gray-900 rounded-lg flex items-center justify-center">
+      <div className="text-gray-400 text-sm">Chargement de l'expérience 3D...</div>
+    </div>
+  )
+})
+
+const OrbitControls = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.OrbitControls })), {
+  ssr: false
+})
+
+const Environment = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.Environment })), {
+  ssr: false
+})
+
+const InteractiveObject = dynamic(() => import("@/components/interactive-object"), {
+  ssr: false
+})
 
 export type ContentMode = "vitrine" | "ecommerce" | "saas"
 
@@ -20,8 +40,10 @@ export default function Home() {
   const canvasRef = useRef<HTMLDivElement>(null)
   const [introComplete, setIntroComplete] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    setIsClient(true)
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
     }
@@ -90,6 +112,15 @@ export default function Home() {
       default:
         return "Site Vitrine"
     }
+  }
+
+  // Ne pas rendre le contenu avant que le client soit prêt
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex items-center justify-center">
+        <div className="text-gray-400">Chargement...</div>
+      </div>
+    )
   }
 
   return (
