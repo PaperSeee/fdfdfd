@@ -365,15 +365,4 @@ export default function Home() {
     </ErrorBoundary>
   )
 }
-                </button>
-              </div>
-            </div>
-          </nav>
-
-          {/* Formulaire de contact modal */}
-          {showContact && <ContactForm onClose={() => setShowContact(false)} />}
-        </div>
-      </div>
-    </ErrorBoundary>
-  )
-}
+              
