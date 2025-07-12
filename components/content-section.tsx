@@ -171,41 +171,45 @@ export default function ContentSection({ mode, onContactClick }: ContentSectionP
       {/* Fonctionnalités */}
       <div className="bg-green-500/10 rounded-xl p-5 border border-green-500/20">
         <h4 className="font-medium mb-4 text-green-300">Fonctionnalités E-commerce</h4>
-        <div className="space-y-3">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-              <CreditCard className="w-4 h-4 text-green-400" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                <CreditCard className="w-4 h-4 text-green-400" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-green-200">Paiements sécurisés</span>
+                <div className="text-xs text-gray-400">Stripe, PayPal intégrés</div>
+              </div>
             </div>
-            <div>
-              <span className="text-sm font-medium text-green-200">Paiements sécurisés</span>
-              <div className="text-xs text-gray-400">Stripe, PayPal intégrés</div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-              <Zap className="w-4 h-4 text-green-400" />
-            </div>
-            <div>
-              <span className="text-sm font-medium text-green-200">Gestion des stocks</span>
-              <div className="text-xs text-gray-400">Automatisation complète</div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-              <Users className="w-4 h-4 text-green-400" />
-            </div>
-            <div>
-              <span className="text-sm font-medium text-green-200">Espace client</span>
-              <div className="text-xs text-gray-400">Commandes et historique</div>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                <Zap className="w-4 h-4 text-green-400" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-green-200">Gestion des stocks</span>
+                <div className="text-xs text-gray-400">Automatisation complète</div>
+              </div>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-              <Headphones className="w-4 h-4 text-green-400" />
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                <Users className="w-4 h-4 text-green-400" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-green-200">Espace client</span>
+                <div className="text-xs text-gray-400">Commandes et historique</div>
+              </div>
             </div>
-            <div>
-              <span className="text-sm font-medium text-green-200">Support technique</span>
-              <div className="text-xs text-gray-400">3 mois inclus</div>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                <Headphones className="w-4 h-4 text-green-400" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-green-200">Support technique</span>
+                <div className="text-xs text-gray-400">3 mois inclus</div>
+              </div>
             </div>
           </div>
         </div>
@@ -263,13 +267,6 @@ export default function ContentSection({ mode, onContactClick }: ContentSectionP
             </div>
             <span className="text-xl font-bold text-blue-300">6 500€</span>
           </div>
-          <div className="flex justify-between items-center bg-blue-500/10 rounded-lg p-3">
-            <div>
-              <span className="text-blue-200 font-medium">Plateforme Avancée</span>
-              <div className="text-gray-400 text-xs">API, intégrations</div>
-            </div>
-            <span className="text-xl font-bold text-blue-300">À partir de 12 000€</span>
-          </div>
         </div>
         <div className="mt-4 p-3 bg-blue-500/10 rounded-lg">
           <div className="text-xs text-blue-300 font-medium">Maintenance mensuelle</div>
@@ -278,38 +275,60 @@ export default function ContentSection({ mode, onContactClick }: ContentSectionP
       </div>
 
       {/* Fonctionnalités */}
-      <div className="space-y-2">
-        {[
-          "Architecture scalable et sécurisée",
-          "Tableaux de bord interactifs",
-          "API REST et intégrations",
-          "Authentification multi-niveaux",
-        ].map((feature, index) => (
-          <div key={index} className="flex items-center space-x-2">
-            <Check className="w-4 h-4 text-blue-400 flex-shrink-0" />
-            <span className="text-sm text-gray-300">{feature}</span>
+      <div className="bg-blue-500/10 rounded-xl p-5 border border-blue-500/20">
+        <h4 className="font-medium mb-4 text-blue-300">Inclus dans chaque plateforme</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                <Zap className="w-4 h-4 text-blue-400" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-blue-200">Architecture scalable</span>
+                <div className="text-xs text-gray-400">Sécurisée et performante</div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                <Star className="w-4 h-4 text-blue-400" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-blue-200">Dashboard interactif</span>
+                <div className="text-xs text-gray-400">Analytics avancés</div>
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
-
-      {/* Témoignage */}
-      <div className="bg-white/5 rounded-lg p-4 space-y-2">
-        <div className="flex items-center space-x-1">
-          {[...Array(5)].map((_, i) => (
-            <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
-          ))}
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                <Users className="w-4 h-4 text-blue-400" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-blue-200">API & intégrations</span>
+                <div className="text-xs text-gray-400">Connectivité complète</div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                <Clock className="w-4 h-4 text-blue-400" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-blue-200">Déploiement rapide</span>
+                <div className="text-xs text-gray-400">2-6 mois selon projet</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <p className="text-xs text-gray-300 italic">
-          "Développement rapide et solution parfaitement adaptée à nos besoins."
-        </p>
-        <p className="text-xs text-gray-500">— Marie Dubois, CTO</p>
       </div>
 
       <button
         onClick={onContactClick}
-        className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
+        className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
       >
-        Planifier un appel
+        <div className="flex items-center justify-center space-x-2">
+          <span>Planifier un appel</span>
+          <Zap className="w-4 h-4" />
+        </div>
       </button>
     </div>
   )
@@ -325,3 +344,4 @@ export default function ContentSection({ mode, onContactClick }: ContentSectionP
       return renderVitrineContent()
   }
 }
+    
