@@ -199,18 +199,18 @@ export default function Home() {
                         {/* Utiliser le composant 3D choisi */}
                         {useAlternative ? (
                           <AlternativeThreeScene
-                            currentMode={currentMode}
+                            currentMode={currentMode || "vitrine"}
                             height="h-[280px]"
-                            introComplete={introComplete}
-                            isTransitioning={isTransitioning}
+                            introComplete={!!introComplete}
+                            isTransitioning={!!isTransitioning}
                             onModeChange={handleModeChange}
                           />
                         ) : (
                           <ThreeScene
-                            currentMode={currentMode}
+                            currentMode={currentMode || "vitrine"}
                             onModeChange={handleModeChange}
-                            isTransitioning={isTransitioning}
-                            introComplete={introComplete}
+                            isTransitioning={!!isTransitioning}
+                            introComplete={!!introComplete}
                             height="h-[280px]"
                           />
                         )}
@@ -267,18 +267,18 @@ export default function Home() {
                           {/* Utiliser le composant 3D choisi */}
                           {useAlternative ? (
                             <AlternativeThreeScene
-                              currentMode={currentMode}
+                              currentMode={currentMode || "vitrine"}
                               height="h-[350px] lg:h-[400px] xl:h-[500px]"
-                              introComplete={introComplete}
-                              isTransitioning={isTransitioning}
+                              introComplete={!!introComplete}
+                              isTransitioning={!!isTransitioning}
                               onModeChange={handleModeChange}
                             />
                           ) : (
                             <ThreeScene
-                              currentMode={currentMode}
+                              currentMode={currentMode || "vitrine"}
                               onModeChange={handleModeChange}
-                              isTransitioning={isTransitioning}
-                              introComplete={introComplete}
+                              isTransitioning={!!isTransitioning}
+                              introComplete={!!introComplete}
                               height="h-[350px] lg:h-[400px] xl:h-[500px]"
                             />
                           )}
@@ -365,4 +365,3 @@ export default function Home() {
     </ErrorBoundary>
   )
 }
-              

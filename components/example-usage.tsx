@@ -87,10 +87,10 @@ export default function ExampleUsage() {
         
         {/* Composant 3D */}
         <ThreeScene
-          currentMode={currentMode}
+          currentMode={currentMode || "vitrine"}
           height="h-96"
-          introComplete={introComplete}
-          isTransitioning={isTransitioning}
+          introComplete={!!introComplete}
+          isTransitioning={!!isTransitioning}
           onModeChange={handleModeChange}
         />
         

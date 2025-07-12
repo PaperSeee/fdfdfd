@@ -34,6 +34,13 @@ export default function ThreeScene({
   introComplete,
   height
 }: ThreeSceneProps) {
+  // Guards pour éviter undefined
+  const safeMode = currentMode || "vitrine"
+  const safeOnModeChange = onModeChange || (() => {})
+  const safeIsTransitioning = !!isTransitioning
+  const safeIntroComplete = !!introComplete
+  const safeHeight = height || "h-96"
+
   const [hasWebGL, setHasWebGL] = useState(true)
   const [isClient, setIsClient] = useState(false)
   const [renderError, setRenderError] = useState<string | null>(null)
@@ -84,7 +91,7 @@ export default function ThreeScene({
   // Ne pas rendre avant que le client soit prêt
   if (!isClient) {
     return (
-      <div className={height}>
+      <div className={safeHeight}>
         <div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center border border-gray-700">
           <div className="text-center">
             <div className="w-8 h-8 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
@@ -98,14 +105,14 @@ export default function ThreeScene({
   // Si pas de support WebGL ou erreur de rendu, afficher le fallback
   if (!hasWebGL || renderError) {
     return (
-      <div className={height}>
+      <div className={safeHeight}>
         <WebGLFallback />
       </div>
     )
   }
 
   return (
-    <div className={`${height} w-full`}>
+    <div className={`${safeHeight} w-full`}>
       <ErrorBoundary 
         fallback={<WebGLFallback />}
         onError={handleRenderError}
@@ -149,13 +156,16 @@ export default function ThreeScene({
           >
             <Environment preset="studio" />
             <InteractiveObject
-              {...safeProps}
+              currentMode={safeMode}
+              onModeChange={safeOnModeChange}
+              isTransitioning={safeIsTransitioning}
+              introComplete={safeIntroComplete}
             />
             <OrbitControls 
               enableZoom={false} 
               enablePan={false} 
               enableRotate={false} 
-              enabled={safeProps.introComplete}
+              enabled={safeIntroComplete}
             />
           </Canvas>
         </Suspense>

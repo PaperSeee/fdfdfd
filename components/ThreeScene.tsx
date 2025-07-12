@@ -42,6 +42,13 @@ export default function ThreeScene({
   isTransitioning,
   onModeChange
 }: ThreeSceneProps) {
+  // Guards pour éviter undefined
+  const safeMode = currentMode || "vitrine"
+  const safeHeight = height || "h-96"
+  const safeIntroComplete = !!introComplete
+  const safeIsTransitioning = !!isTransitioning
+  const safeOnModeChange = onModeChange || (() => {})
+
   const containerRef = useRef<HTMLDivElement>(null)
   const sceneRef = useRef<THREE.Scene | null>(null)
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
@@ -257,7 +264,7 @@ export default function ThreeScene({
   // Rendu conditionnel
   if (!isClient) {
     return (
-      <div className={height}>
+      <div className={safeHeight}>
         <LoadingFallback />
       </div>
     )
@@ -265,7 +272,7 @@ export default function ThreeScene({
 
   if (!hasWebGL) {
     return (
-      <div className={height}>
+      <div className={safeHeight}>
         <WebGLFallback />
       </div>
     )
@@ -273,14 +280,14 @@ export default function ThreeScene({
 
   if (isLoading) {
     return (
-      <div className={height}>
+      <div className={safeHeight}>
         <LoadingFallback />
       </div>
     )
   }
 
   return (
-    <div className={`${height} w-full`}>
+    <div className={`${safeHeight} w-full`}>
       <div
         ref={containerRef}
         className="w-full h-full cursor-pointer rounded-lg overflow-hidden"
