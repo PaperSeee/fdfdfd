@@ -1,1 +1,0 @@
-export type ContentMode = "vitrine" | "ecommerce" | "saas" 

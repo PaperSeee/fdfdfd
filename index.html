@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Création de sites web premium : Vitrine, E-commerce, SaaS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+  <div id="loader-container">
+    <canvas id="loader-canvas"></canvas>
+    <div id="progress-bar"><div id="progress"></div></div>
+    <div id="loader-text">Chargement...</div>
+  </div>
+  <main id="main-content" style="display:none;">
+    <div class="main-grid">
+      <div class="left-3d">
+        <div id="three-container"></div>
+      </div>
+      <div class="right-content">
+        <header class="hero">
+          <h1 class="hero-title">Créateur de sites web <span class="highlight">premium</span></h1>
+          <p class="hero-sub">Vitrine, E-commerce ou SaaS : <span class="highlight">je conçois votre succès digital</span></p>
+        </header>
+        <section id="dynamic-content"></section>
+        <aside class="why-me">
+          <h2>Pourquoi me choisir&nbsp;?</h2>
+          <ul>
+            <li>🎯 Expertise technique et design</li>
+            <li>⚡ Animations et expérience utilisateur haut de gamme</li>
+            <li>🤝 Accompagnement personnalisé</li>
+            <li>🚀 Performance, sécurité, SEO</li>
+          </ul>
+        </aside>
+        <footer class="footer">
+          <span>&copy; 2024 – Votre nom ou agence. Tous droits réservés.</span>
+        </footer>
+      </div>
+    </div>
+    <div id="contact-modal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Contactez-moi</h2>
+        <form id="contact-form">
+          <label for="name">Nom</label>
+          <input type="text" id="name" name="name" required>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+          <label for="message">Votre projet</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+          <button type="submit" class="cta-main">Envoyer</button>
+        </form>
+        <div id="contact-success" style="display:none; color:var(--color-fg); margin-top:1rem;">Merci, votre message a bien été envoyé !</div>
+      </div>
+    </div>
+  </main>
+  <script src="loader.js"></script>
+  <script src="three-scene.js"></script>
+  <script src="main.js"></script>
+</body>
+</html> 
