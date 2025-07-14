@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react"
 import { useFrame, useThree } from "@react-three/fiber"
 import type { Mesh } from "three"
 import { gsap } from "gsap"
-import type { ContentMode } from "@/app/page"
+import type { ContentMode } from "@/types/content-mode"
 
 interface InteractiveObjectProps {
   currentMode: ContentMode

@@ -7,8 +7,7 @@ import ContentSection from "@/components/content-section"
 import CustomCursor from "@/components/custom-cursor"
 import IntroSequence from "@/components/intro-sequence"
 import ContactForm from "@/components/contact-form"
-
-export type ContentMode = "vitrine" | "ecommerce" | "saas"
+import type { ContentMode } from "@/types/content-mode"
 
 // Charger le composant 3D COMPLÈTEMENT côté client
 const ThreeScene = dynamic(() => import("@/components/three-scene"), {

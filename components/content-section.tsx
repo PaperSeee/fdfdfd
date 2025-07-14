@@ -1,7 +1,7 @@
 "use client"
 
 import { ShoppingBag, Zap, Star, Check, Globe, CreditCard, Users, Euro, Clock, Headphones } from "lucide-react"
-import type { ContentMode } from "@/app/page"
+import type { ContentMode } from "@/types/content-mode"
 
 interface ContentSectionProps {
   mode: ContentMode

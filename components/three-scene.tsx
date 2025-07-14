@@ -4,7 +4,7 @@ import { useState, Suspense } from "react"
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls, Environment } from "@react-three/drei"
 import InteractiveObject from "@/components/interactive-object"
-import type { ContentMode } from "@/app/page"
+import type { ContentMode } from "@/types/content-mode"
 
 interface ThreeSceneProps {
   currentMode: ContentMode
